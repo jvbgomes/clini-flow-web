@@ -11,13 +11,17 @@ export function AuthProvider({ children }) {
   async function login(email, password) {
     const response = await api.post('/auth/login', { email, password });
     const { user, token } = response.data;
-
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
     setUser(user);
   }
 
-  function logout() {
+  async function logout() {
+    try {
+      await api.post('/auth/logout');
+    } catch {
+      // ignore — still clear local state
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);

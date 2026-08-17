@@ -1,25 +1,27 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import api from '../services/api';
 import './Login.css';
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function Register() {
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
+
+  function handleChange(e) {
+    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
-      navigate('/dashboard');
-    } catch {
-      setError('Invalid email or password.');
+      await api.post('/auth/register', form);
+      navigate('/login');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Registration failed.');
     } finally {
       setLoading(false);
     }
@@ -30,20 +32,34 @@ export default function Login() {
       <div className="login-card">
         <div className="login-logo">
           <h1>Clini<span>Flow</span></h1>
-          <p>Enter your credentials to continue</p>
+          <p>Create your account</p>
         </div>
 
         {error && <div className="alert alert-error">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
+            <label className="form-label" htmlFor="name">Full Name</label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              className="form-input"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Jane Doe"
+              required
+            />
+          </div>
+          <div className="form-group">
             <label className="form-label" htmlFor="email">Email</label>
             <input
               id="email"
               type="email"
+              name="email"
               className="form-input"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
+              value={form.email}
+              onChange={handleChange}
               placeholder="your@email.com"
               required
             />
@@ -53,26 +69,23 @@ export default function Login() {
             <input
               id="password"
               type="password"
+              name="password"
               className="form-input"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
+              value={form.password}
+              onChange={handleChange}
               placeholder="••••••••"
               required
             />
           </div>
-          <button
-            type="submit"
-            className="btn btn-primary login-submit"
-            disabled={loading}
-          >
-            {loading ? 'Signing in...' : 'Sign in'}
+          <button type="submit" className="btn btn-primary login-submit" disabled={loading}>
+            {loading ? 'Creating account...' : 'Create account'}
           </button>
         </form>
 
         <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: 'var(--text-muted)' }}>
-          Don't have an account?{' '}
-          <Link to="/register" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 500 }}>
-            Register
+          Already have an account?{' '}
+          <Link to="/login" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 500 }}>
+            Sign in
           </Link>
         </p>
       </div>
