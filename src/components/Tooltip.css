@@ -1,0 +1,36 @@
+.tooltip-wrap {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.tooltip-trigger {
+  cursor: default;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.tooltip-box {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  background: #1e293b;
+  color: #f8fafc;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: normal;
+  max-width: 280px;
+  min-width: 120px;
+  z-index: 50;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+}
+
+.tooltip-wrap:hover .tooltip-box {
+  display: block;
+}
